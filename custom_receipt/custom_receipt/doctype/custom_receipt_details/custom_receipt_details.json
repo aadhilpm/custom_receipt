@@ -1,0 +1,106 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-07-12 15:05:44.988721",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "column_break_oiam",
+  "reference_doctype",
+  "reference_voucher",
+  "party",
+  "date",
+  "total_amount",
+  "outstanding_amount",
+  "allocated_amount",
+  "sales_rebate_percentage"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "reference_doctype",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Reference Type ",
+   "link_filters": "[[\"DocType\",\"name\",\"in\",[\"Sales Invoice\",\"Journal Entry\"]]]",
+   "options": "DocType",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "reference_voucher",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Reference Voucher",
+   "options": "reference_doctype",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Amount",
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "outstanding_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Outstanding Amount",
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "allocated_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Allocated",
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_oiam",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 1,
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date"
+  },
+  {
+   "columns": 2,
+   "fieldname": "party",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fetch_from": "party.custom_rebate_percentage",
+   "fieldname": "sales_rebate_percentage",
+   "fieldtype": "Percent",
+   "label": "Sales Rebate Percentage",
+   "precision": "2",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-07-13 01:13:23.929970",
+ "modified_by": "Administrator",
+ "module": "Custom Receipt",
+ "name": "Custom Receipt Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

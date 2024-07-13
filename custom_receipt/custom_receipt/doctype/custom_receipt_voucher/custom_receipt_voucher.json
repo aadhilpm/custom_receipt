@@ -1,0 +1,288 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2024-07-12 14:48:08.821398",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_adrb",
+  "amended_from",
+  "paid_to",
+  "reference",
+  "entry_type",
+  "naming_series",
+  "column_break_llcy",
+  "document_date",
+  "posting_date",
+  "journal_entry",
+  "remarks",
+  "filter_option_section",
+  "invoice_from_date",
+  "customer",
+  "fetch_customer_wise",
+  "column_break_gzyv",
+  "invoice_to_date",
+  "customer_group",
+  "customer_group_wise",
+  "payment_references_section",
+  "receipt_details",
+  "section_break_fvlc",
+  "column_break_yufj",
+  "column_break_btbz",
+  "total_allocated_amount",
+  "calculation_section",
+  "rebate_account",
+  "calculate_sales_rebate",
+  "addition_or_deduction_details",
+  "section_break_papo",
+  "column_break_wchh",
+  "column_break_mwqc",
+  "total_addition_or_deduction_amount",
+  "total_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_adrb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Custom Receipt Voucher",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "document_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Document Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_group",
+   "fieldtype": "Link",
+   "label": "Customer Group",
+   "options": "Customer Group"
+  },
+  {
+   "fieldname": "column_break_llcy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "invoice_from_date",
+   "fieldtype": "Date",
+   "label": "Invoice From Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "invoice_to_date",
+   "fieldtype": "Date",
+   "label": "Invoice To Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "filter_option_section",
+   "fieldtype": "Section Break",
+   "label": "Filter Option"
+  },
+  {
+   "fieldname": "fetch_customer_wise",
+   "fieldtype": "Button",
+   "label": "Fetch Customer wise"
+  },
+  {
+   "fieldname": "column_break_gzyv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customer_group_wise",
+   "fieldtype": "Button",
+   "label": "Customer Group Wise"
+  },
+  {
+   "fieldname": "paid_to",
+   "fieldtype": "Link",
+   "label": "Paid To",
+   "link_filters": "[[\"Account\",\"is_group\",\"=\",0],[\"Account\",\"account_type\",\"in\",[\"Bank\",\"Cash\"]]]",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reference",
+   "fieldtype": "Data",
+   "label": "Reference",
+   "reqd": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "payment_references_section",
+   "fieldtype": "Section Break",
+   "label": "Payment References"
+  },
+  {
+   "fieldname": "receipt_details",
+   "fieldtype": "Table",
+   "options": "Custom Receipt Details"
+  },
+  {
+   "fieldname": "calculation_section",
+   "fieldtype": "Section Break",
+   "label": "Calculation "
+  },
+  {
+   "fieldname": "addition_or_deduction_details",
+   "fieldtype": "Table",
+   "label": "Addition or Deduction Details",
+   "options": "Addition or Deduction Details"
+  },
+  {
+   "bold": 1,
+   "fieldname": "calculate_sales_rebate",
+   "fieldtype": "Button",
+   "label": "Calculate Sales Rebate"
+  },
+  {
+   "default": "Sales Rebate - HT",
+   "fieldname": "rebate_account",
+   "fieldtype": "Link",
+   "label": "Rebate Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "total_allocated_amount",
+   "fieldtype": "Currency",
+   "label": "Total Allocated Amount",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_addition_or_deduction_amount",
+   "fieldtype": "Currency",
+   "label": "Total Addition or Deduction Amount",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_fvlc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_yufj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_btbz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_papo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_wchh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_mwqc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "paid_to.account_type",
+   "fieldname": "entry_type",
+   "fieldtype": "Data",
+   "label": "Entry Type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Data",
+   "label": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "series",
+   "options": "CRV-.####"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [
+  {
+   "link_doctype": "Journal Entry",
+   "link_fieldname": "custom_custom_receipt_voucher"
+  }
+ ],
+ "modified": "2024-07-12 22:17:43.534763",
+ "modified_by": "Administrator",
+ "module": "Custom Receipt",
+ "name": "Custom Receipt Voucher",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
