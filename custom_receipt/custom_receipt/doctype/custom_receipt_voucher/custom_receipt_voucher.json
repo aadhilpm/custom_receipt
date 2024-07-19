@@ -161,7 +161,7 @@
    "label": "Calculate Sales Rebate"
   },
   {
-   "default": "Sales Rebate - HT",
+   "default": "Rebate Accrual - HT",
    "fieldname": "rebate_account",
    "fieldtype": "Link",
    "label": "Rebate Account",
@@ -246,7 +246,7 @@
    "link_fieldname": "custom_custom_receipt_voucher"
   }
  ],
- "modified": "2024-07-12 22:17:43.534763",
+ "modified": "2024-07-19 16:58:54.983958",
  "modified_by": "Administrator",
  "module": "Custom Receipt",
  "name": "Custom Receipt Voucher",

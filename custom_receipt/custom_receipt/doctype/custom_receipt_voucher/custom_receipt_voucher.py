@@ -81,9 +81,6 @@ class CustomReceiptVoucher(Document):
             # Cancel the Journal Entry
             journal_entry.cancel()
             
-            # Delete the Journal Entry
-            journal_entry.delete()
-            
             frappe.msgprint(f"Journal Entry {self.journal_entry} canceled and deleted.")
             self.journal_entry = None	
 
