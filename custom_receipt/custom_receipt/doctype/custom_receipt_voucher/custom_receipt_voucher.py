@@ -91,11 +91,18 @@ def fetch_gl_entries(invoice_from_date, invoice_to_date, customer=None, customer
     if not (invoice_from_date and invoice_to_date and (customer or customer_group)):
         frappe.throw("Please fill all filter fields.")
 
+    # Fetch default receivable account from the Company doctype
+    company = frappe.defaults.get_user_default("company")
+    default_receivable_account = frappe.db.get_value('Company', company, 'default_receivable_account')
+
+    if not default_receivable_account:
+        frappe.throw("Default Receivable Account not set in Company settings.")
+
     # Determine filters based on whether customer or customer_group is provided
     filters = {
         'voucher_type': ['in', ['Sales Invoice', 'Journal Entry']],
         'posting_date': ['between', [invoice_from_date, invoice_to_date]],
-        'account': 'Debtors - HT',
+        'account': default_receivable_account,
         'is_cancelled': 0
     }
 
