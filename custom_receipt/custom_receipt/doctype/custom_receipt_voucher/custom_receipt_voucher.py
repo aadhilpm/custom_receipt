@@ -86,13 +86,14 @@ class CustomReceiptVoucher(Document):
 
 
 @frappe.whitelist()
-def fetch_gl_entries(invoice_from_date, invoice_to_date, customer=None, customer_group=None):
+def fetch_gl_entries(invoice_from_date, invoice_to_date, customer=None, customer_group=None, company=None):
     # Validate input
     if not (invoice_from_date and invoice_to_date and (customer or customer_group)):
         frappe.throw("Please fill all filter fields.")
 
     # Fetch default receivable account from the Company doctype
-    company = frappe.defaults.get_user_default("company")
+    if not company:
+        company = frappe.defaults.get_user_default("company")
     default_receivable_account = frappe.db.get_value('Company', company, 'default_receivable_account')
 
     if not default_receivable_account:

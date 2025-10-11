@@ -28,7 +28,8 @@ function fetchGLData(frm, params) {
 
     let args = {
         invoice_from_date: params.invoice_from_date,
-        invoice_to_date: params.invoice_to_date
+        invoice_to_date: params.invoice_to_date,
+        company: frm.doc.company
     };
 
     if (params.type === 'customer') {
