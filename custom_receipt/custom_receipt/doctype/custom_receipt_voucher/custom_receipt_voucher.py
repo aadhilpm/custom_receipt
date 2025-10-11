@@ -91,52 +91,114 @@ def fetch_gl_entries(invoice_from_date, invoice_to_date, customer=None, customer
     if not (invoice_from_date and invoice_to_date and (customer or customer_group)):
         frappe.throw("Please fill all filter fields.")
 
-    # Fetch default receivable account from the Company doctype
     if not company:
         company = frappe.defaults.get_user_default("company")
-    default_receivable_account = frappe.db.get_value('Company', company, 'default_receivable_account')
-
-    if not default_receivable_account:
-        frappe.throw("Default Receivable Account not set in Company settings.")
-
-    # Determine filters based on whether customer or customer_group is provided
-    filters = {
-        'voucher_type': ['in', ['Sales Invoice', 'Journal Entry']],
-        'posting_date': ['between', [invoice_from_date, invoice_to_date]],
-        'account': default_receivable_account,
-        'is_cancelled': 0
-    }
-
-    if customer:
-        filters['party'] = customer
-    elif customer_group:
-        # Fetch Customers linked with Customer Group
-        customers = frappe.get_all('Customer', filters={'customer_group': customer_group}, fields=['name'])
-        filters['party'] = ['in', [customer.name for customer in customers]]
-
-    # Fetch GL Entries ordered by posting date descending
-    gl_entries = frappe.get_all('GL Entry',
-        filters=filters,
-        fields=['voucher_type', 'voucher_no', 'party', 'posting_date', 'debit', 'credit', 'voucher_subtype'],
-        order_by='posting_date asc'
-    )
 
     # Prepare data for child table
     receipt_details = []
-    for entry in gl_entries:
-        # Determine amount based on voucher subtype if available
-        amount = entry.debit if entry.voucher_subtype == 'Debit Note' else (-entry.credit if entry.voucher_subtype == 'Credit Note' else 0)
-        
-        if amount != 0:
+
+    # Determine customer filters
+    customer_filters = {}
+    if customer:
+        customer_filters['name'] = customer
+    elif customer_group:
+        customer_filters['customer_group'] = customer_group
+
+    # Fetch customers
+    customers = frappe.get_all('Customer', filters=customer_filters, fields=['name'])
+    customer_list = [c.name for c in customers]
+
+    if not customer_list:
+        return receipt_details
+
+    # Fetch Sales Invoices
+    sales_invoice_filters = {
+        'posting_date': ['between', [invoice_from_date, invoice_to_date]],
+        'customer': ['in', customer_list],
+        'docstatus': 1,  # Submitted
+        'company': company
+    }
+
+    sales_invoices = frappe.get_all('Sales Invoice',
+        filters=sales_invoice_filters,
+        fields=['name', 'customer', 'posting_date', 'grand_total', 'outstanding_amount', 'is_return'],
+        order_by='posting_date asc'
+    )
+
+    # Process Sales Invoices
+    for invoice in sales_invoices:
+        # For return invoices, use negative amounts
+        if invoice.is_return:
+            total_amount = -abs(invoice.grand_total)
+            outstanding = -abs(invoice.outstanding_amount)
+        else:
+            total_amount = invoice.grand_total
+            outstanding = invoice.outstanding_amount
+
+        # Only include invoices with outstanding amounts
+        if outstanding != 0:
             receipt_details.append({
-                'reference_doctype': entry.voucher_type,
-                'reference_voucher': entry.voucher_no,
-                'party': entry.party,
-                'date': entry.posting_date,
-                'total_amount': amount,
-                'outstanding_amount': amount,
-                'allocated_amount': amount
+                'reference_doctype': 'Sales Invoice',
+                'reference_voucher': invoice.name,
+                'party': invoice.customer,
+                'date': invoice.posting_date,
+                'total_amount': total_amount,
+                'outstanding_amount': outstanding,
+                'allocated_amount': outstanding
             })
+
+    # Fetch Journal Entries with the customer as party
+    je_filters = {
+        'posting_date': ['between', [invoice_from_date, invoice_to_date]],
+        'docstatus': 1,
+        'company': company
+    }
+
+    journal_entries = frappe.db.sql("""
+        SELECT DISTINCT
+            je.name,
+            jea.party,
+            je.posting_date,
+            je.voucher_type
+        FROM `tabJournal Entry` je
+        INNER JOIN `tabJournal Entry Account` jea ON je.name = jea.parent
+        WHERE je.docstatus = 1
+            AND je.posting_date BETWEEN %s AND %s
+            AND je.company = %s
+            AND jea.party_type = 'Customer'
+            AND jea.party IN %s
+            AND jea.reference_type IS NULL
+        ORDER BY je.posting_date ASC
+    """, (invoice_from_date, invoice_to_date, company, customer_list), as_dict=1)
+
+    # Process Journal Entries
+    for je in journal_entries:
+        # Get the total debit and credit for this customer in this JE
+        je_accounts = frappe.db.sql("""
+            SELECT
+                SUM(debit_in_account_currency) as total_debit,
+                SUM(credit_in_account_currency) as total_credit
+            FROM `tabJournal Entry Account`
+            WHERE parent = %s
+                AND party_type = 'Customer'
+                AND party = %s
+        """, (je.name, je.party), as_dict=1)
+
+        if je_accounts:
+            total_debit = je_accounts[0].total_debit or 0
+            total_credit = je_accounts[0].total_credit or 0
+            amount = total_debit - total_credit
+
+            if amount != 0:
+                receipt_details.append({
+                    'reference_doctype': 'Journal Entry',
+                    'reference_voucher': je.name,
+                    'party': je.party,
+                    'date': je.posting_date,
+                    'total_amount': amount,
+                    'outstanding_amount': amount,
+                    'allocated_amount': amount
+                })
 
     return receipt_details
 
